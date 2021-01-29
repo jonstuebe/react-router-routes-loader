@@ -1,6 +1,6 @@
 {
   "name": "react-router-routes-loader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "loader for generating route config array for use with React Router and Webpack",
   "author": "Jon Stuebe",
   "license": "MIT",
