@@ -115,8 +115,6 @@ export default function loader(this: webpack.loader.LoaderContext) {
         this.addDependency(route.component);
       }
 
-      console.log(getAsModule(this, routes));
-
       finalCallback(null, getAsModule(this, routes));
     })
     .catch((e) => {
