@@ -92,6 +92,6 @@ Here is a basic React project. All of the project code lives in `src` with a top
 
 Dynamic segments such as `/blog/:slug` are not yet supported but coming soon!
 
-## Licence
+## License
 
 MIT
