@@ -95,10 +95,7 @@ function getAsModule(
       return `{
         path: "${route.path}",
         exact: "${route.exact}",
-        component: require(${stringifyRequest(
-          context,
-          route.component
-        )}).default
+        component: require(${stringifyRequest(context, route.component)})
       }`;
     })
     .join(",")}]`;

@@ -33,7 +33,7 @@ This assumes you have a Webpack project with React Router set up.
       return (
         <Route
           key={idx}
-          component={route.component}
+          component={route.component.default}
           path={route.path}
           exact={Boolean(route.exact)}
         />
@@ -53,7 +53,7 @@ This assumes you have a Webpack project with React Router set up.
         return (
           <Route
             key={idx}
-            component={route.component}
+            component={route.component.default}
             path={route.path}
             exact={Boolean(route.exact)}
           />
