@@ -9,39 +9,84 @@ interface Route {
   path: string;
 }
 
-function filterFiles(file: string) {
-  if (file.indexOf("_404") !== -1) {
+function filterFiles(fileName: string): boolean {
+  if (fileName.indexOf("_404") !== -1) {
     return false;
   }
 
-  return ![".DS_Store", ".git", "node_modules"].includes(file);
+  return ![".DS_Store", ".git", "node_modules"].includes(fileName);
 }
 
-function isIndex(file: string) {
-  return file.indexOf("index") !== -1;
+function getFileSlug(fileName: string): string {
+  return fileName.split(".")[0];
+}
+
+function isIndexFile(fileSlug: string): boolean {
+  return fileSlug === "index";
+}
+
+function isParamFile(fileSlug: string): boolean {
+  return fileSlug.startsWith("[") && fileSlug.endsWith("]");
+}
+
+function isRootFile(fileSlug: string): boolean {
+  return !isIndexFile(fileSlug) && !isParamFile(fileSlug);
+}
+
+function buildPath(
+  basePath: string,
+  directory: string,
+  fileSlug?: string
+): string {
+  if (fileSlug) {
+    return directory.replace(basePath, "") === ""
+      ? `/${fileSlug}`
+      : directory.replace(basePath, "") + `/${fileSlug}`;
+  } else {
+    return directory.replace(basePath, "") === ""
+      ? "/"
+      : directory.replace(basePath, "");
+  }
 }
 
 async function buildRoute(
   basePath: string,
   directory: string,
-  filePath: string
+  fileName: string
 ): Promise<Route> {
-  if (isIndex(filePath)) {
+  const fileSlug = getFileSlug(fileName);
+
+  const route = {
+    exact: true as true,
+    component: path.join(directory, fileName),
+  };
+
+  if (isIndexFile(fileSlug)) {
     return {
-      path:
-        directory.replace(basePath, "") === ""
-          ? "/"
-          : directory.replace(basePath, ""),
-      exact: true,
-      component: path.join(directory, filePath),
-    };
-  } else {
-    return {
-      path: path.join(directory, filePath.split(".")[0]).replace(basePath, ""),
-      exact: true,
-      component: path.join(directory, filePath),
+      ...route,
+      path: buildPath(basePath, directory),
     };
   }
+
+  if (isRootFile(fileSlug)) {
+    return {
+      ...route,
+      path: buildPath(basePath, directory, fileSlug),
+    };
+  }
+
+  if (isParamFile(fileSlug)) {
+    const paramsSlug = `:${fileSlug.slice(1, -1)}`;
+    return {
+      ...route,
+      path: buildPath(basePath, directory, paramsSlug),
+    };
+  }
+
+  return {
+    ...route,
+    path: path.join(directory, fileSlug).replace(basePath, ""),
+  };
 }
 
 async function buildRouteForDirectory(
